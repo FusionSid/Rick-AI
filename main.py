@@ -15,7 +15,7 @@ tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForCausalLM.from_pretrained(model_name)
 
 
-async def run_ai(message: str, author_id: int) -> str:
+async def run_ai(message: str, author_id: int, channel) -> str:
     async with aiosqlite.connect("main.db") as db:
         cur = await db.execute("SELECT * FROM Tensors WHERE user_id=?", (author_id,))
         data = await cur.fetchall()
@@ -53,6 +53,9 @@ async def run_ai(message: str, author_id: int) -> str:
     output = BytesIO()
     torch.save(context, output)
     output.seek(0)
+
+    if message == ">send-tensor":
+        return await channel.send(file=discord.File(output, "pt"))
 
     context_bytes_data = bytes(output.read())
 
@@ -96,7 +99,7 @@ async def on_message(message):
         return
 
 
-    response = await run_ai(message.content, message.author.id)
+    response = await run_ai(message.content, message.author.id, message.channel)
 
     if response.replace(" ", "") == "":
         response = "IDK"
