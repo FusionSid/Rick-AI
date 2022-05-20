@@ -55,7 +55,8 @@ async def run_ai(message: str, author_id: int, channel) -> str:
     output.seek(0)
 
     if message == ">send-tensor":
-        return await channel.send(file=discord.File(output, "pt"))
+        await channel.send(file=discord.File(output, "output.pt"))
+        return 'Sent!'
 
     context_bytes_data = bytes(output.read())
 
