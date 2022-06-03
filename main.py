@@ -108,4 +108,4 @@ async def on_message(message):
     await message.reply(response)
 
 
-client.run("ODkyMjczNzI5ODEwMzQ2MDE1.YVKgqg.1kIZ3cSZLAtpONxaNohLvMsGG5g")
+client.run("Your token")
