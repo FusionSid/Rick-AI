@@ -1,10 +1,15 @@
+import os
 from io import BytesIO
 
 import torch
 import discord
 import aiosqlite
+import dotenv
 from discord.ext import commands
 from transformers import AutoModelForCausalLM, AutoTokenizer
+
+
+dotenv.load_dotenv()
 
 prefix = ">"
 client = commands.Bot(prefix, intents=discord.Intents.all())
@@ -108,4 +113,4 @@ async def on_message(message):
     await message.reply(response)
 
 
-client.run("Your token")
+client.run(os.environ["TOKEN"])
