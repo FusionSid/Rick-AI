@@ -6,6 +6,7 @@ import aiosqlite
 import pytesseract
 from PIL import Image
 
+
 async def run_ai(model, tokenizer, actual_message: discord.Message) -> str:
     author_id = actual_message.author.id
     channel = actual_message.channel

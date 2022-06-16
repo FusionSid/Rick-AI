@@ -3,6 +3,7 @@ from discord.ext import commands
 
 from utils import run_ai
 
+
 class DM_AI(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -15,11 +16,7 @@ class DM_AI(commands.Cog):
         if not isinstance(message.channel, discord.DMChannel):
             return
 
-        response = await run_ai(
-            self.client.model,
-            self.client.tokenizer,
-            message
-        )
+        response = await run_ai(self.client.model, self.client.tokenizer, message)
         if not response:
             return
 
