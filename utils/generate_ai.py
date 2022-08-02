@@ -58,7 +58,7 @@ async def run_ai(model, tokenizer, actual_message: discord.Message) -> str:
         context = torch.cat(
             [
                 context,
-                tokenizer.encode((message + tokenizer.eos_token), return_tensors="pt"),
+                tokenizer.encode(((message) + tokenizer.eos_token), return_tensors="pt"),
             ],
             dim=-1,
         )
@@ -83,15 +83,26 @@ async def run_ai(model, tokenizer, actual_message: discord.Message) -> str:
         )
         await db.commit()
 
+    def to_var(x):
+        if not torch.is_tensor(x):
+            x = torch.Tensor(x)
+        if torch.cuda.is_available():
+            x = x.cuda()
+        return x
+
+    personas = ["i am 64 years old but feel quite young.", "i try to eat healthy but limit mcdonalds to once a week.", "i regret working as a doctor for the last 20 years.", "my secret hobby is making self-help youtube videos.", "My favourite game is minecraft"]
+    for idx, i in enumerate(personas):
+        personas[idx] = i + tokenizer.eos_token
+    personas = tokenizer.encode((''.join(personas + ['<|sep|>'] + ['<|start|>']) + tokenizer.eos_token), return_tensors="pt")
+    # context = torch.cat([context, personas], dim=-1).long()
     response = model.generate(
         context,
-        max_length=6942,
-        do_sample=True,
+        max_length=1000,
         top_k=100,
         temperature=0.75,
         pad_token_id=tokenizer.eos_token_id,
+    
     )
-
     ai_response = tokenizer.decode(
         response[:, context.shape[-1] :][0], skip_special_tokens=True
     )
