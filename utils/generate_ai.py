@@ -30,7 +30,7 @@ async def run_ai(model, tokenizer, actual_message: discord.Message) -> str:
             await db.commit()
             data = [(author_id, None)]
 
-        if message == ">reset" or message == "<reset":
+        if message == ">reset" or message == "!reset":
             await db.execute(
                 "UPDATE Tensors SET context=? WHERE user_id=?",
                 (
