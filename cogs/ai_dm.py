@@ -13,8 +13,13 @@ class DM_AI(commands.Cog):
         if message.author.id == self.client.user.id:
             return
 
-        if not isinstance(message.channel, discord.DMChannel):
-            return
+        if message.channel.id == 1006365173252112456:
+            print("e")
+            pass
+        else:
+            if not isinstance(message.channel, discord.DMChannel):
+                print("ee")
+                return
 
         response = await run_ai(self.client.model, self.client.tokenizer, message)
         if not response:
