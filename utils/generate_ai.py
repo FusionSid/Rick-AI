@@ -29,7 +29,7 @@ async def run_ai(model, tokenizer, actual_message: discord.Message) -> str:
             await db.execute("INSERT INTO Tensors (user_id) VALUES (?)", (author_id,))
             await db.commit()
             data = [(author_id, None)]
-
+        print(message)
         if message == ">reset" or message == "rick":
             await db.execute(
                 "UPDATE Tensors SET context=? WHERE user_id=?",
