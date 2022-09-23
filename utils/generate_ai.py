@@ -1,3 +1,4 @@
+import re
 from io import BytesIO
 
 import torch
@@ -19,7 +20,7 @@ async def run_ai(model, tokenizer, actual_message: discord.Message) -> str:
                 await attachment.save(img_save)
                 img = Image.open(img_save)
                 text = pytesseract.image_to_string(img)
-                message += text
+                message += re.sub("[^a-zA-Z\d\s:]", "", text)
 
     async with aiosqlite.connect("main.db") as db:
         cur = await db.execute("SELECT * FROM Tensors WHERE user_id=?", (author_id,))
@@ -82,18 +83,6 @@ async def run_ai(model, tokenizer, actual_message: discord.Message) -> str:
         )
         await db.commit()
 
-    def to_var(x):
-        if not torch.is_tensor(x):
-            x = torch.Tensor(x)
-        if torch.cuda.is_available():
-            x = x.cuda()
-        return x
-
-    personas = ["i am 64 years old but feel quite young.", "i try to eat healthy but limit mcdonalds to once a week.", "i regret working as a doctor for the last 20 years.", "my secret hobby is making self-help youtube videos.", "My favourite game is minecraft"]
-    for idx, i in enumerate(personas):
-        personas[idx] = i + tokenizer.eos_token
-    personas = tokenizer.encode((''.join(personas + ['<|sep|>'] + ['<|start|>']) + tokenizer.eos_token), return_tensors="pt")
-    # context = torch.cat([context, personas], dim=-1).long()
     response = model.generate(
         context,
         max_length=1000,
